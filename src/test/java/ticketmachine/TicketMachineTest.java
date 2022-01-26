@@ -2,6 +2,7 @@ package ticketmachine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,4 +52,50 @@ public class TicketMachineTest {
 		assertTrue(machine.printTicket());
 	}
 
+	@Test
+	// S5 : Quand on imprime un ticket la balance est décrémentée du prix du ticket 
+	public void decrementeQuandImprime() {
+		machine.insertMoney(PRICE);
+		machine.printTicket();
+		assertEquals(0,machine.getBalance(), "La balance n'est pas mise à jour");
+	}
+
+	@Test
+	// S6 : Le montant collecté est mis à jour quand on imprime un ticket (pas avant)
+	public void collecteMontantApresImpression() {
+		machine.insertMoney(PRICE);
+		assertEquals(0, machine.getTotal(), "Le total est mis à jour au mauvais moment");
+		machine.printTicket();
+		assertEquals(50,machine.getTotal(), "Le total n'est pas mis à jour au bon moment");
+	}
+
+	@Test
+	// S7 : refund() rends correctement la monnaie
+	public void refundRendsMonnaie() {
+		machine.insertMoney(PRICE+30);
+		assertEquals(PRICE+30,machine.refund(),"La fonctionne refund ne rends pas le bon montant");
+		machine.printTicket();
+		assertEquals(30,machine.refund(),"La fonctionne refund ne rends pas le bon montant");
+	}
+
+	@Test 
+	// S8 : refund() remet la balance à 0 
+	public void refundResetBalance() {
+		machine.insertMoney(PRICE+30);
+		machine.printTicket();
+		machine.refund();
+		assertEquals(0,machine.getBalance(),"refund ne remet pas à 0 la balance");
+	}
+
+	@Test
+	// S9 : On ne peut pas insérer un montant négatif 
+	public void pasMontantNeg() {
+		assertThrows(IllegalArgumentException.class,()->{ machine.insertMoney(-PRICE);});
+	}
+
+	@Test 
+	// S10 : On ne peut pas créer de machine qui délivre des tickets dont le prix est négatif 
+	public void pasTicketNeg() {
+		assertThrows(IllegalArgumentException.class,()->{TicketMachine m = new TicketMachine(-PRICE);});
+	}
 }

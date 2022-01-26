@@ -41,6 +41,7 @@ public class TicketMachine {
 		return price;
 	}
 
+
 	/**
 	 * Return the total amount collected by the machine.
 	 *
@@ -64,7 +65,13 @@ public class TicketMachine {
 	 * @throws IllegalArgumentException if amount is not positive
 	 */
 	public void insertMoney(int amount) {
-		balance = balance + amount;
+		if(amount<=0)
+		{
+			throw new IllegalArgumentException("Amount inserted must be positive");
+		}
+		else {
+			balance = balance + amount;
+		}
 	}
 
 	/**
@@ -74,7 +81,9 @@ public class TicketMachine {
 	 */
 	public int refund() {
 		System.out.println("Je vous rends : " + balance + " centimes");
-		return balance;
+		int toClient=balance;
+		balance=0;
+		return toClient;
 	}
 
 	/**
@@ -92,6 +101,8 @@ public class TicketMachine {
 			System.out.println("# " + price + " cents.");
 			System.out.println("##################");
 			System.out.println();
+			balance=balance-price;
+			total=total+price;
 			return true;
 		}
 		else 
