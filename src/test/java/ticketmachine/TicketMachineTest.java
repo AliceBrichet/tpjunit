@@ -2,6 +2,7 @@ package ticketmachine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,4 +33,22 @@ public class TicketMachineTest {
                 // Les montants ont été correctement additionnés  
 		assertEquals(10 + 20, machine.getBalance(), "La balance n'est pas correctement mise à jour");              
 	}
+	
+	@Test
+	// S3 : On n'imprime pas le ticket si le montant inséré est insuffisant 
+	public void nImprimePasSiPasAssezDArgent() {
+		// Given : "J'ai une machine neuve"
+		// When : "Je ne mets pas assez d'argent"
+		machine.insertMoney(PRICE-1);
+		// Then : "On ne doit pas imprimer le ticket"
+		assertFalse(machine.printTicket());
+	}
+
+	@Test
+	// S4 : On imprime le ticket si le montant inséré est suffisant 
+	public void imprimeSiAssezDArgent(){
+		machine.insertMoney(PRICE);
+		assertTrue(machine.printTicket());
+	}
+
 }
